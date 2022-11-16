@@ -24,6 +24,8 @@ public class NeuralNetwork {
     
     
     static TrainingData[] tDataSet;
+    
+    //TODO: Am ende sollte die genauigkeit des Netztes bestimmt werden und in die JSON reingeschrieben werden!
    
     
     public static void main(String[] args) throws IOException {
