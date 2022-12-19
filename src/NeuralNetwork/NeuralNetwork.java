@@ -1,20 +1,30 @@
 package NeuralNetwork;
+import java.awt.image.BufferedImage;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Properties;
+
+import org.apache.commons.codec.binary.Base64;
 
 import MNISTUtilis.MnistImage;
 import MNISTUtilis.MnistUtil;
 import Utilis.FileHelper;
+import Utilis.ImageHelper;
 import Utilis.JsonHelper;
 import lib.NeuralNetworkSave;
 
 public class NeuralNetwork {
 	//Set Parameter
-	final static int SAMPLE = 10000;
-	final static int ITERATIONS = 10000;
+	static int SAMPLE = 60000;
+	static int ITERATIONS = 1000;
+	static int HIDDENNEURON1 = 16;
+	static int HIDDENNEURON2 = 16;
 	
 	static FileHelper fileHelper;
 	
@@ -38,9 +48,9 @@ public class NeuralNetwork {
     	// Create the layers
     	layers = new Layer[4];
     	layers[0] = null; // Input Layer 784,16
-    	layers[1] = new Layer(784,16); // Hidden Layer 16,16
-    	layers[2] = new Layer(16,16); // Hidden Layer 16,16
-    	layers[3] = new Layer(16,10);// Output Layer 16,10
+    	layers[1] = new Layer(784,HIDDENNEURON1); // Hidden Layer 16,16
+    	layers[2] = new Layer(HIDDENNEURON1,HIDDENNEURON2); // Hidden Layer 16,16
+    	layers[3] = new Layer(HIDDENNEURON2,10);// Output Layer 16,10
         
     	// Create the training data
     	CreateTrainingData();
@@ -67,7 +77,7 @@ public class NeuralNetwork {
             System.out.println("");
         }
        
-        train(ITERATIONS, 0.05f);
+        train(ITERATIONS, 0.5f);
 
         System.out.println("============");
         System.out.println("Output after training");
@@ -95,11 +105,12 @@ public class NeuralNetwork {
         }
     }
    
-    public static void CreateTrainingData() {
+    public static void CreateTrainingData() throws IOException {
     	tDataSet = new TrainingData[SAMPLE];
     	int i = 0;
-		for (MnistImage mnistimg : MUtil.getImages(SAMPLE)) {
-			tDataSet[i] = new TrainingData(StatUtil.ArrayListtoFloatArray(mnistimg.getImgdata()), (float) mnistimg.getLabel());
+    	ArrayList<MnistImage> mnistData = MUtil.getImages(SAMPLE);
+		for (MnistImage mnistimg : mnistData) {
+			tDataSet[i] = new TrainingData(StatUtil.ArrayListtoFloatArray(ImageHelper.BufferMnistImage(mnistimg.getImgdata())), (float) mnistimg.getLabel());
 			i = i+1;
 		}
 		System.out.println(tDataSet);
